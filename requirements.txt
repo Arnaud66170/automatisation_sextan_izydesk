@@ -6,3 +6,4 @@ thefuzz
 fuzzywuzzy
 streamlit
 xlsxwriter
+import matplotlib.pyplot as plt
