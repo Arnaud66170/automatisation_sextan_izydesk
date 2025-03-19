@@ -137,7 +137,11 @@ def process_files(path_sextan, path_izydesk):
     data_izydesk = data_izydesk_corrected
 
     pd.options.display.max_colwidth = None
-    data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"])
+    # data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"])
+    data_sextan = data_sextan.drop(
+        columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"],
+        errors="ignore"
+    )
 
     data_sextan = data_sextan.rename(columns={
         "n°": "id_sextan",
