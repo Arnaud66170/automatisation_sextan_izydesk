@@ -444,6 +444,21 @@ def process_files(path_sextan, path_izydesk):
 
     # Nettoyage colonnes temporaires
     merged_data.drop(columns=["produit_sextan_clean", "famille_clean"], inplace=True)
+    
+    # Définir par défaut
+    id_corner = ""
+    nom_corner = ""
+    for keyword, values in corner_mapping.items():
+        if keyword in nom_fichier:
+            id_corner = values["id_corner"]
+            nom_corner = values["nom_corner"]
+            data_izydesk["id_corner"] = id_corner
+            data_izydesk["nom corner"] = nom_corner
+            break
+    # Réorganiser les colonnes
+    colonnes = ['id_corner', 'nom corner'] + [col for col in data_izydesk.columns if col not in ['id_corner', 'nom corner']]
+    data_izydesk = data_izydesk[colonnes]
+        
 
     # --- 11. Export ---
     nom_export_izydesk = f"exports/izydesk_auto_{nom_corner}.xlsx"
