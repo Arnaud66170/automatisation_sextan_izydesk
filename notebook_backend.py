@@ -1,16 +1,8 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import re
-from scipy.optimize import linprog
-from collections import defaultdict, Counter
 import unidecode
-from thefuzz import process, fuzz
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
-import openpyxl
-from fuzzywuzzy import process, fuzz
-import streamlit as st
+from thefuzz import fuzz
 import os
 data_sextan = pd.read_excel("extraction_totale_sextan.xlsx")
 # data_izydesk  = pd.read_excel("export_brut_izydesk_toulouse.xlsx")
