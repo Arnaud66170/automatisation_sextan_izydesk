@@ -87,7 +87,7 @@ def process_files(path_sextan, path_izydesk):
     data_izydesk["ttc_total"] = data_izydesk["ttc_unitaire"] * data_izydesk["quantité"]
     data_izydesk["montant réglé total"] = data_izydesk["ttc_total"]
 
-    data_izydesk = data_izydesk.drop(columns=["ht", "ttc", "montant réglé", "paiements"])
+    data_izydesk = data_izydesk.drop(columns=["ht", "ttc", "montant réglé", "paiements"], errors = "ignore")
 
     # --- 6. Traitement Sextan ---
     data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"])
