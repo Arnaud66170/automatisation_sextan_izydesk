@@ -1,0 +1,8 @@
+pandas
+numpy
+openpyxl
+unidecode
+thefuzz
+fuzzywuzzy
+streamlit
+xlsxwriter
