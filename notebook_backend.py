@@ -43,14 +43,15 @@ def process_files(path_sextan, path_izydesk):
         if re.match(pattern, col):
             data_izydesk.rename(columns={col: "id_commande"}, inplace=True)
             break  # On s'arrête après avoir trouvé la colonne
+        
     # Vérification et découpage sécurisé
     data_izydesk[["type paiement", "montant réglé"]] = data_izydesk["paiements"].str.split(":", n = 1, expand = True)
 
     # Suppression du signe € et conversion en float
     data_izydesk["montant réglé"] = data_izydesk["montant réglé"].str.replace("€", "", regex=False)
     data_izydesk["montant réglé"] = pd.to_numeric(data_izydesk["montant réglé"], errors="coerce")
-
     # data = data_izydesk.drop(columns = ["paiements"])
+    
     # Réorganisation des colonnes pour une meilleure lisibilité
     colonnes = list(data_izydesk.columns)
     index_paiements = colonnes.index("type paiement")
@@ -132,16 +133,13 @@ def process_files(path_sextan, path_izydesk):
     # Suppression des colonnes redondantes
     data_izydesk_corrected = data_izydesk_corrected.drop(columns=["ht", "ttc", "montant réglé", "paiements"])
 
-    produits_sans_prix = data_izydesk_corrected[data_izydesk_corrected["ht_unitaire"].isna()][["produit"]].drop_duplicates()
+    # produits_sans_prix = data_izydesk_corrected[data_izydesk_corrected["ht_unitaire"].isna()][["produit"]].drop_duplicates()
 
     data_izydesk = data_izydesk_corrected
 
     pd.options.display.max_colwidth = None
-    # data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"])
-    data_sextan = data_sextan.drop(
-        columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"],
-        errors="ignore"
-    )
+    # data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"], errors="ignore")
+    data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"],errors="ignore")
 
     data_sextan = data_sextan.rename(columns={
         "n°": "id_sextan",
@@ -152,24 +150,19 @@ def process_files(path_sextan, path_izydesk):
     # Suppression du symbole € et conversion en float avec 2 décimales
     data_sextan["cout_unitaire"] = data_sextan["cout_unitaire"].str.replace("€", "", regex=False).str.replace(",", ".")
     data_sextan["cout_unitaire"] = pd.to_numeric(data_sextan["cout_unitaire"], errors="coerce").round(2)
+
     data_sextan = data_sextan[
         ~data_sextan["produit_sextan"].str.contains("solanid|arena", case=False, na=False)
     ].reset_index(drop=True)
 
-    pd.options.display.max_colwidth = None
-    data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"])
-    data_sextan = data_sextan.rename(columns={
-        "n°": "id_sextan",
-        "nom": "produit_sextan",
-        "coût unit.": "cout_unitaire"
-    })
-
-    # Suppression du symbole € et conversion en float avec 2 décimales
-    data_sextan["cout_unitaire"] = data_sextan["cout_unitaire"].str.replace("€", "", regex=False).str.replace(",", ".")
-    data_sextan["cout_unitaire"] = pd.to_numeric(data_sextan["cout_unitaire"], errors="coerce").round(2)
     data_sextan = data_sextan[
-        ~data_sextan["produit_sextan"].str.contains("solanid|arena", case=False, na=False)
+        ~data_sextan["famille"].str.contains("ftv|lmf|solanid", case=False, na=False)
     ].reset_index(drop=True)
+    
+    produits_filtres = data_sextan[
+        data_sextan["produit_sextan"].str.contains("solanid|arena", case=False, na=False)
+    ][["produit_sextan"]].drop_duplicates()
+
 
     def split_product_info(value):
         parts = value.split("|")  # Séparer par "|"
@@ -249,7 +242,6 @@ def process_files(path_sextan, path_izydesk):
 
     # Créer une colonne pour indiquer si le produit existe ou non dans Sextan
     merged_data["produit_sextan_trouve"] = merged_data["produit_sextan"].notna()
-
     # Maintenant, merged_data a un booléen True/False qui montre la correspondance
 
     # Suppression de la colonne de correspondance temporaire
@@ -258,6 +250,8 @@ def process_files(path_sextan, path_izydesk):
     # Suppression des doublons en conservant la première occurrence
     merged_data_cleaned = merged_data.drop_duplicates(subset=["id_commande", "date", "heure", "service", "produit"], keep="first").reset_index(drop=True)
 
+    merged_data = merged_data_cleaned
+    
     # Attribution de familles si NaN
 
     # Nettoyage pour homogénéiser
