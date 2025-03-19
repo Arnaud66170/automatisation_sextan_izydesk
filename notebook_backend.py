@@ -5,6 +5,17 @@ import unidecode
 from thefuzz import fuzz
 import os
 
+# Liste des dossiers nécessaires
+required_dirs = ["temp", "exports"]
+
+# Vérification + création si besoin
+for folder in required_dirs:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(f"Dossier créé : {folder}")
+    else:
+        print(f"Dossier déjà existant : {folder}")
+
 def process_files(path_sextan, path_izydesk):
     # --- 1. Lecture des fichiers ---
     data_sextan = pd.read_excel(path_sextan)
