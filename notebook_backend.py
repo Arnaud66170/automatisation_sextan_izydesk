@@ -138,6 +138,15 @@ def process_files(path_sextan, path_izydesk):
     data_izydesk = data_izydesk_corrected
 
     pd.options.display.max_colwidth = None
+    
+    print(f"Colonnes présentes dans data_sextan : {[f'[{col}]' for col in data_sextan.columns]}")
+
+    colonnes_a_supprimer = ["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"]
+    colonnes_presentes = [col for col in colonnes_a_supprimer if col in data_sextan.columns]
+    print(f"Colonnes à supprimer présentes dans le DataFrame : {colonnes_presentes}")
+    data_sextan = data_sextan.drop(columns=colonnes_presentes)
+
+    
     # data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"], errors="ignore")
     data_sextan = data_sextan.drop(columns=["unnamed: 0", "marque", "type", "catégorie", "prod. par", "nb portion", "nb sous-prod.", "stock", "prix ht", "prix ttc", "options"],errors="ignore")
 
